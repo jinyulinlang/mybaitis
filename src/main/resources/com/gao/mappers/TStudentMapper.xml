@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gao.mappers.TStudentMapper">
+    <resultMap id="TStudentResultMap" type="TStudent">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="age" jdbcType="INTEGER" property="age"/>
+    </resultMap>
+    <resultMap id="TStudentResultMap3" type="TStudent">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="age" jdbcType="INTEGER" property="age"/>
+        <association property="tAddress" resultMap="TAddressResultMap"/>
+    </resultMap>
+    <resultMap id="TAddressResultMap" type="TAddress">
+        <!--<result column="id" jdbcType="INTEGER" property="id"/>-->
+        <result column="province" jdbcType="INTEGER" property="province"/>
+        <result column="city" jdbcType="INTEGER" property="city"/>
+        <result column="area" jdbcType="INTEGER" property="area"/>
+    </resultMap>
+    <resultMap id="TStudentResultMap2" type="TStudent">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="address_id" jdbcType="INTEGER" property="tAddress.id"/>
+        <result column="province" jdbcType="INTEGER" property="tAddress.province"/>
+        <result column="city" jdbcType="INTEGER" property="tAddress.city"/>
+        <result column="area" jdbcType="INTEGER" property="tAddress.area"/>
+    </resultMap>
+
+    <resultMap id="TStudentResultMap4" type="TStudent">
+        <!--   <result column="id" jdbcType="INTEGER" property="id"/>-->
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="age" jdbcType="INTEGER" property="age"/>
+        <association property="tAddress" javaType="TAddress">
+            <result column="province" jdbcType="INTEGER" property="province"/>
+            <result column="city" jdbcType="INTEGER" property="city"/>
+            <result column="area" jdbcType="INTEGER" property="area"/>
+        </association>
+    </resultMap>
+    <resultMap id="TStudentResultMap5" type="TStudent">
+        <!--   <result column="id" jdbcType="INTEGER" property="id"/>-->
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="age" jdbcType="INTEGER" property="age"/>
+        <association property="tAddress" column="address_id" select="com.gao.mappers.TAddressMapper.findAddressById3"/>
+    </resultMap>
+    <resultMap id="TStudentResultMap6" type="TStudent">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="age" jdbcType="INTEGER" property="age"/>
+        <association property="tAddress" column="address_id" select="com.gao.mappers.TAddressMapper.findAddressById3"/>
+        <association property="tGrade" column="grade_id" select="com.gao.mappers.TGradeMapper.findGradeById1"/>
+    </resultMap>
+    <insert id="insert" parameterType="TStudent">
+    insert into t_student (id, name, age
+      )
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{age,jdbcType=INTEGER}
+  </insert>
+    <insert id="insertSelective" parameterType="TStudent">
+        insert into t_student
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="age != null">
+                age,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="age != null">
+                #{age,jdbcType=INTEGER},
+            </if>
+
+        </trim>
+    </insert>
+    <sql id="TStudentSql">
+    id,name ,age
+    </sql>
+    <update id="update" parameterType="TStudent">
+        update t_student set name =#{name,jdbcType=VARCHAR},age =#{age,jdbcType=INTEGER}  where id=#{id,jdbcType=INTEGER}
+    </update>
+    <delete id="delete" parameterType="java.lang.Integer">
+        delete  from  t_student where  id=#{id ,jdbcType=INTEGER}
+    </delete>
+    <select id="findById" parameterType="java.lang.Integer" resultMap="TStudentResultMap">
+        select id,age ,`name` from t_student where id=#{id,jdbcType=INTEGER}
+    </select>
+    <select id="find" resultMap="TStudentResultMap">
+          select id,age ,`name` from t_student
+    </select>
+    <!-- <select id="findStudentWithAddress" resultMap="TStudentResultMap2">
+           select s.id,s.name,s.age ,a.province,a.city,a.area from t_student  s,t_address a where  s.address_id=a.id and  s.id=#{id,jdbcType=INTEGER}
+     </select>-->
+    <select id="findStudentWithAddress" resultMap="TStudentResultMap2">
+          select s.id,s.name,s.age ,a.province,a.city,a.area  from t_student  s,t_address a where  s.address_id=a.id and  s.id=#{id,jdbcType=INTEGER}
+    </select>
+    <select id="findStudentWithAddress3" resultMap="TStudentResultMap3">
+          select s.id,s.name,s.age ,a.province,a.city,a.area  from t_student  s,t_address a where  s.address_id=a.id and  s.id=#{id,jdbcType=INTEGER}
+    </select>
+    <select id="findStudentWithAddress4" resultMap="TStudentResultMap4">
+          select *  from t_student  s,t_address a where  s.address_id=a.id and  s.id=#{id,jdbcType=INTEGER}
+    </select>
+    <select id="findStudentWithAddress5" resultMap="TStudentResultMap5">
+          select  s.*,a.*   from t_student  s,t_address a where  s.address_id=a.id and  s.id=#{id,jdbcType=INTEGER}
+    </select>
+    <select id="findStudentByGradeId2" resultType="TStudent" parameterType="java.lang.Integer">
+          select  *   from t_student  where grade_id=#{gradeId,jdbcType=INTEGER}
+    </select>
+    <select id="findStudentByGradeId3" resultMap="TStudentResultMap5" parameterType="java.lang.Integer">
+          select  *   from t_student  where grade_id=#{gradeId,jdbcType=INTEGER}
+    </select>
+    <select id="findStudentWithAddressAndGradeById2" resultMap="TStudentResultMap6"
+            parameterType="java.lang.Integer">
+          select  *   from t_student  where id=#{id,jdbcType=INTEGER}
+    </select>
+    <select id="findStudentWithPage" resultMap="TStudentResultMap6"
+           >
+          select  *   from t_student
+    </select>
+</mapper>
