@@ -139,6 +139,7 @@ public class StudentAnnoTest3 {
 
     @Test
     public void testFindStudents() {
+//        声明一个map
         Map<String, Object> bean = new HashMap<>();
 //        bean.put("age", 13);
         List<TStudent> students = tStudentAnnMapper.findStudents(bean);
